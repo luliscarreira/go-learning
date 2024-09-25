@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"local-store/db"
 	"os"
 	"strings"
 )
@@ -9,13 +10,29 @@ import (
 func main() {
 	fmt.Println("Welcome, please login or register to continue.")
 	userName := handleUser()
-
 	fmt.Printf("Welcome to your store %s!\n", userName)
+	db := db.DB{}
+	err := db.ReadDatabase()
+	if err != nil {
+		panic(err)
+	}
 
-	// read database from local file
-	// log to user that the database is read
-	// if user logs in successfully, print to user the operations that can be done
-	// ask user for the operation to be done
+	fmt.Println("Store loaded.")
+	fmt.Println(db.GetProducts())
+
+	// Missing make a purchase
+	operations := `Choose an operation to perform:
+    1. Add item
+    2. Delete item
+    3. Update item
+    4. List items
+    5. Exit
+    Enter your choice: `
+
+	operation := promptToUserAndScanIntInput(operations)
+
+	fmt.Println(operation)
+
 	// User can add, delete, update, or list items and exit
 	// User can make a purchase that is persisted to the database
 	// if user chooses to add, ask for item name and price and quantity
@@ -28,7 +45,7 @@ func main() {
 }
 
 func handleUser() string {
-	userName := promptToUserAndScanInput("Enter your username: ")
+	userName := promptToUserAndScanStringInput("Enter your username: ")
 	userPassword, err := readUserPasswordFromFile(userName)
 	if err != nil {
 		fmt.Println("Registering with given username...")
@@ -38,8 +55,16 @@ func handleUser() string {
 	return login(userName, userPassword)
 }
 
-func promptToUserAndScanInput(prompt string) string {
+func promptToUserAndScanStringInput(prompt string) string {
 	var input string
+	fmt.Print(prompt)
+	fmt.Scan(&input)
+
+	return input
+}
+
+func promptToUserAndScanIntInput(prompt string) int {
+	var input int
 	fmt.Print(prompt)
 	fmt.Scan(&input)
 
@@ -58,7 +83,7 @@ func readUserPasswordFromFile(userName string) (string, error) {
 }
 
 func registerUser(userName string) string {
-	userPassword := promptToUserAndScanInput("Enter your password: ")
+	userPassword := promptToUserAndScanStringInput("Enter your password: ")
 	userFile := fmt.Sprintf("users/%s", strings.ToLower(userName))
 	err := os.WriteFile(userFile, []byte(userPassword), 0644)
 	if err != nil {
@@ -70,8 +95,8 @@ func registerUser(userName string) string {
 }
 
 func login(userName, userPassword string) string {
-	for true {
-		password := promptToUserAndScanInput("Enter your password: ")
+	for {
+		password := promptToUserAndScanStringInput("Enter your password: ")
 		if password != userPassword {
 			fmt.Println("Invalid password, try again...")
 			continue
