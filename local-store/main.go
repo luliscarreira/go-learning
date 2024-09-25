@@ -11,16 +11,16 @@ func main() {
 	fmt.Println("Welcome, please login or register to continue.")
 	userName := handleUser()
 	fmt.Printf("Welcome to your store %s!\n", userName)
-	db := db.DB{}
-	err := db.ReadDatabase()
+	loadedDb := db.DB{}
+	err := loadedDb.ReadDatabase()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Store loaded.")
-	fmt.Println(db.GetProducts())
+	fmt.Println(loadedDb.GetProducts())
 
-	// Missing make a purchase
+	// TODO: Implement make a purchase
 	operations := `Choose an operation to perform:
     1. Add item
     2. Delete item
@@ -29,21 +29,66 @@ func main() {
     5. Exit
     Enter your choice: `
 
-	operation := promptToUserAndScanIntInput(operations)
+	for {
+		operation := promptToUserAndScanIntInput(operations)
+		fmt.Println(operation)
 
-	fmt.Println(operation)
+		switch operation {
+		case 1:
+			fmt.Println("Operation add item selected")
+			productName := promptToUserAndScanStringInput("Enter product name: ")
+			productPrice := promptToUserAndScanFloatInput("Enter product price: ")
+			productQuantity := promptToUserAndScanIntInput("Enter product quantity: ")
 
-	// User can add, delete, update, or list items and exit
-	// User can make a purchase that is persisted to the database
-	// if user chooses to add, ask for item name and price and quantity
-	// write to database
-	// if user chooses to delete, ask for item name
-	// delete item from database
-	// if user chooses to update, ask for item name and new price and quantity
-	// update item in database
-	// if user chooses to list, list all items
+			newProduct := db.Product{
+				Name:     productName,
+				Price:    productPrice,
+				Quantity: int16(productQuantity),
+			}
+
+			loadedDb.AddProduct(newProduct)
+			fmt.Println("Product added: ", newProduct)
+
+			continue
+		case 2:
+			fmt.Println("Operation delete item selected")
+			productName := promptToUserAndScanStringInput("Enter product name: ")
+			loadedDb.RemoveProduct(productName)
+			fmt.Println("Product removed: ", productName)
+
+			continue
+		case 3:
+			// TODO: Implement proper validation for updating product
+			fmt.Println("Operation update item selected")
+			productName := promptToUserAndScanStringInput("Enter product to update: ")
+			newProductName := promptToUserAndScanStringInput("Enter new product name: ")
+			productPrice := promptToUserAndScanFloatInput("Enter product price: ")
+			productQuantity := promptToUserAndScanIntInput("Enter product quantity: ")
+
+			updatedProduct := db.Product{
+				Name:     newProductName,
+				Price:    productPrice,
+				Quantity: int16(productQuantity),
+			}
+
+			loadedDb.UpdateProduct(productName, updatedProduct)
+			fmt.Println("Product updated: ", updatedProduct)
+
+			continue
+		case 4:
+			fmt.Println("Operation list items selected")
+			fmt.Println(loadedDb.GetProducts())
+
+			continue
+		default:
+			fmt.Println("Goodbye!")
+
+			return
+		}
+	}
 }
 
+// TODO: Create a package for handling user
 func handleUser() string {
 	userName := promptToUserAndScanStringInput("Enter your username: ")
 	userPassword, err := readUserPasswordFromFile(userName)
@@ -57,6 +102,14 @@ func handleUser() string {
 
 func promptToUserAndScanStringInput(prompt string) string {
 	var input string
+	fmt.Print(prompt)
+	fmt.Scan(&input)
+
+	return input
+}
+
+func promptToUserAndScanFloatInput(prompt string) float64 {
+	var input float64
 	fmt.Print(prompt)
 	fmt.Scan(&input)
 

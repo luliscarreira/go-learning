@@ -32,6 +32,10 @@ func (db *DB) ReadDatabase() error {
 	}
 
 	for _, line := range strings.Split(string(test), "\n") {
+		if line == "" {
+			continue
+		}
+
 		productFromDb := strings.Split(line, " ")
 		productName := productFromDb[0]
 		productPrice, _ := strconv.ParseFloat(productFromDb[1], 64)
