@@ -138,7 +138,13 @@ func readUserPasswordFromFile(userName string) (string, error) {
 func registerUser(userName string) string {
 	userPassword := promptToUserAndScanStringInput("Enter your password: ")
 	userFile := fmt.Sprintf("users/%s", strings.ToLower(userName))
-	err := os.WriteFile(userFile, []byte(userPassword), 0644)
+	err := os.MkdirAll("users", 0755)
+	if err != nil {
+		fmt.Println("Error registering user.")
+		panic(err)
+	}
+
+	err = os.WriteFile(userFile, []byte(userPassword), 0644)
 	if err != nil {
 		fmt.Println("Error registering user.")
 		panic(err)
