@@ -26,9 +26,14 @@ func (todo Todo) Print() {
 }
 
 func (todo Todo) Save() error {
-	fileName := "todo.json"
+	fileName := "todos/todo.json"
 
 	jsonNote, err := json.Marshal(todo)
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll("todos", 0755)
 	if err != nil {
 		return err
 	}

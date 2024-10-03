@@ -34,9 +34,14 @@ func (n Note) Print() {
 func (n Note) Save() error {
 	fileName := strings.ReplaceAll(n.Title, " ", "_")
 	fileName = strings.ToLower(fileName)
-	fileName = fmt.Sprintf("%s.json", fileName)
+	fileName = fmt.Sprintf("notes/%s.json", fileName)
 
 	jsonNote, err := json.Marshal(n)
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll("notes", 0755)
 	if err != nil {
 		return err
 	}
