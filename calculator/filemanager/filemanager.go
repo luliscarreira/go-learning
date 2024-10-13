@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 )
 
@@ -16,8 +15,6 @@ type FileManager struct {
 func (fm FileManager) ReadLines() ([]string, error) {
 	file, err := os.Open(fm.InputFilePath)
 	if err != nil {
-		fmt.Println(err)
-
 		return nil, errors.New("failed to open file")
 	}
 
@@ -29,7 +26,6 @@ func (fm FileManager) ReadLines() ([]string, error) {
 
 	err = scanner.Err()
 	if err != nil {
-		fmt.Println(err)
 		file.Close()
 
 		return nil, errors.New("failed to read line in file")
