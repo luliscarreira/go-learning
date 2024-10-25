@@ -62,3 +62,65 @@ func GetAllEvents() ([]Event, error) {
 
 	return events, nil
 }
+
+func GetEventById(id int64) (Event, error) {
+	query := `SELECT * FROM events WHERE id = ?`
+	row := db.DB.QueryRow(query, id)
+	var event Event
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+	if err != nil {
+		return event, err
+	}
+
+	return event, nil
+}
+
+func UpdateEvent(id int64, event Event) error {
+	query := `
+    UPDATE events
+    SET name = ?, description = ?, location = ?, date_time = ?
+    WHERE id = ?
+    `
+
+	_, err := db.DB.Exec(query, event.Name, event.Description, event.Location, event.DateTime, event.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (event Event) Update() error {
+	query := `
+    UPDATE events
+    SET name = ?, description = ?, location = ?, date_time = ?
+    WHERE id = ?
+    `
+
+	_, err := db.DB.Exec(query, event.Name, event.Description, event.Location, event.DateTime, event.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteEvent(id int64) error {
+	query := `DELETE FROM events WHERE id = ?`
+	_, err := db.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (event Event) Delete() error {
+	query := `DELETE FROM events WHERE id = ?`
+	_, err := db.DB.Exec(query, event.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
