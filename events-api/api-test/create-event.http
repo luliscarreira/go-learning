@@ -1,5 +1,6 @@
 POST http://localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQHRlc3QuY29tIiwiZXhwIjoxNzMwMTY5MDA4LCJ1c2VySWQiOjF9.YLK7jpuV81bcMXjatJx5tD1Y6Lmf4_939ZSAAXYtd7Y
 
 {
   "Name": "Meu evento",
